@@ -5,13 +5,17 @@ import numpy as np
 import imutils
 from imageai.Detection import ObjectDetection
 import os
-
+import serial as sl
+import time
 print(cv2.__version__)
 print('Starting')
 
 
+ser = sl.Serial('/dev/cu.usbmodem144101',9600) 
+time.sleep(1)
 
-video_src = 'videos/rear1.mp4'
+video_src = 'videos/rear2R.mp4'
+
 #video_src = 'dataset/video2.avi'
 
 cap = cv2.VideoCapture(video_src)
@@ -40,6 +44,7 @@ rightRegion = buildRegion(middleRegion['to'],oneRegionWidth*3)
 cap_area = capWidth*capHeight
 seen =[]
 
+signals = {'left': 0, 'middle': 1, 'right': 2,'leftM': 3, 'middleM': 4, 'rightM': 5}
 
 point_threshold_distance = 50
 
@@ -71,11 +76,14 @@ def middle(x1, x2):
 def classifie_to_region(middleXCoordinate):
     if(is_in_region(leftRegion, middleXCoordinate)):
         print('LEFT')
+        ser.write(str(signals['left']).encode())
         return 'LEFT'
     if(is_in_region(middleRegion, middleXCoordinate)):
+        ser.write(str(signals['middle']).encode())
         print('MIDDLE')
         return 'MIDDLE'
     if(is_in_region(rightRegion, middleXCoordinate)):
+        ser.write(str(signals['right']).encode())
         print('RIGHT')
         return 'RIGHT'
 
