@@ -14,9 +14,7 @@ print('Starting')
 ser = sl.Serial('/dev/cu.usbmodem144101',9600) 
 time.sleep(1)
 
-video_src = 'videos/rear2R.mp4'
-
-#video_src = 'dataset/video2.avi'
+video_src = 'videos/rearR.mp4'
 
 cap = cv2.VideoCapture(video_src)
 
@@ -37,14 +35,14 @@ capWidth = cap.get(3)  # float
 buildRegion = lambda x,to: {'from':x, 'to': to}
 oneRegionWidth = capWidth/3
 
-leftRegion = buildRegion(0,oneRegionWidth)
-middleRegion = buildRegion(leftRegion['to'],oneRegionWidth*2)
-rightRegion = buildRegion(middleRegion['to'],oneRegionWidth*3)
+rightRegion = buildRegion(0,oneRegionWidth)
+middleRegion = buildRegion(rightRegion['to'],oneRegionWidth*2)
+leftRegion = buildRegion(middleRegion['to'],oneRegionWidth*3)
 
 cap_area = capWidth*capHeight
 seen =[]
 
-signals = {'left': 0, 'middle': 1, 'right': 2,'leftM': 3, 'middleM': 4, 'rightM': 5}
+signals = {'left': 0, 'middle': 1, 'right': 2,'leftM': 3, 'middleM': 4, 'rightM': 5,'leftS': 6, 'middleS': 7, 'rightS': 8, 'close': 9}
 
 point_threshold_distance = 50
 
@@ -142,6 +140,7 @@ while True:
     cv2.imshow('video', img)
  
     if cv2.waitKey(33) == 27:
+        ser.write(str(signals['close']).encode())
         break
 
 cv2.destroyAllWindows()
